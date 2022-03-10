@@ -6,14 +6,16 @@
 //
 
 import UIKit
+import SwiftUI
 
 class HomeViewController: UIViewController {
-    
     @IBOutlet weak var activitiesTb: UITableView!
-    private var viewModel = HomeViewModel()
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
+    var viewModel = HomeViewModel(activityEntities: [])
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.showLoading(show: true)
         setupUI()
         getActivities()
     }
@@ -26,12 +28,21 @@ class HomeViewController: UIViewController {
     private func getActivities() {
         viewModel.getActivities { [weak self] in
             guard let self = self else { return }
+            self.showLoading(show: false)
             self.activitiesTb.reloadData()
+        }
+    }
+    
+    func showLoading(show: Bool) {
+        if show {
+            self.indicatorView.startAnimating()
+        } else {
+            self.indicatorView.stopAnimating()
         }
     }
 }
 
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
+extension HomeViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return viewModel.numberOfSection()
@@ -54,6 +65,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.numberOfRowInSection(section: section)
     }
+}
+
+extension HomeViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: SectionHeaderView.reuseIdentifier)
@@ -64,7 +78,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
         return view
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }

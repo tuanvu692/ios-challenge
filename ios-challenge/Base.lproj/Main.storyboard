@@ -11,7 +11,7 @@
         <!--Home View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="HomeViewController" customModule="ios_challenge" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="intialVC" id="BYZ-38-t0r" customClass="HomeViewController" customModule="ios_challenge" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -51,10 +51,19 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="5a2-qc-a2P"/>
                                 </connections>
                             </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="MjV-z3-x1A">
+                                <rect key="frame" x="187" y="428" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="nNg-wn-byN"/>
+                                    <constraint firstAttribute="height" constant="40" id="pZp-7V-Lj3"/>
+                                </constraints>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="MjV-z3-x1A" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="0MK-uC-eE0"/>
+                            <constraint firstItem="MjV-z3-x1A" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="8Xh-R4-E92"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KC3-Da-PVD" secondAttribute="trailing" id="ct7-2a-g0W"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="KC3-Da-PVD" secondAttribute="bottom" id="fX9-hu-GaG"/>
                             <constraint firstItem="KC3-Da-PVD" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="rf9-yf-hjt"/>
@@ -63,11 +72,12 @@
                     </view>
                     <connections>
                         <outlet property="activitiesTb" destination="KC3-Da-PVD" id="HQt-zl-uha"/>
+                        <outlet property="indicatorView" destination="MjV-z3-x1A" id="f9R-mK-p57"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-557" y="-133"/>
+            <point key="canvasLocation" x="-557.97101449275362" y="-133.25892857142856"/>
         </scene>
     </scenes>
     <resources>

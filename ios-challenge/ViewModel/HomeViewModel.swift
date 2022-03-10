@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class HomeViewModel {
+class HomeViewModel {
     private var activities = [Activity]()
     private var activityEntities = [ActivityEntity]()
-
+    
     static var mainURL = "http://www.boredapi.com/api/"
     let numberOfActivitiesPerType = 5
     
@@ -31,7 +31,9 @@ final class HomeViewModel {
         }
     }
     
-    init() {}
+    init(activityEntities: [ActivityEntity]) {
+        self.activityEntities = activityEntities
+    }
     
     func getActivities(completion: @escaping () -> Void) {
         ///`Create Object Of DispatchGroup`
