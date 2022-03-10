@@ -8,8 +8,9 @@
 import Foundation
 
 final class HomeViewModel {
-    var activities = [Activity]()
-    
+    private var activities = [Activity]()
+    private var activityEntities = [ActivityEntity]()
+
     static var mainURL = "http://www.boredapi.com/api/"
     let numberOfActivitiesPerType = 5
     
@@ -30,28 +31,58 @@ final class HomeViewModel {
         }
     }
     
-    init() {
-    }
+    init() {}
     
     func getActivities(completion: @escaping () -> Void) {
         ///`Create Object Of DispatchGroup`
         let dispatchGroup = DispatchGroup()
-        
         ActivityType.allCases.forEach { type in
             for _ in 1...numberOfActivitiesPerType {
                 dispatchGroup.enter()
-                getData(EndPoints.activity(type: type.rawValue).url, Activity.self) { data in
+                getData(EndPoints.activity(type: type.rawValue).url, Activity.self) { [weak self] data in
+                    guard let self = self else { return }
                     self.activities.append(data)
                     dispatchGroup.leave()
                 }
             }
         }
         /// `Notify Main thread`
-        dispatchGroup.notify(queue: .main) {
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.cookActivityEntities()
             completion()
         }
     }
-        
+    
+    private func cookActivityEntities() {
+        ActivityType.allCases.forEach { type in
+            var activityEntity = ActivityEntity()
+            activityEntity.type = type
+            activityEntity.activities = self.activities
+                .filter{ $0.type == type }
+            self.activityEntities.append(activityEntity)
+        }
+    }
+    
+    func numberOfSection() -> Int {
+        return self.activityEntities.count
+    }
+    
+    func numberOfRowInSection(section: Int) -> Int {
+        return self.activityEntities[section].activities.count
+    }
+    
+    func activityEntityForAt(section: Int) -> ActivityEntity {
+        return self.activityEntities[section]
+    }
+    
+    func activityForRowAt(indexPath: IndexPath) -> Activity {
+        return self.activityEntities[indexPath.section].activities[indexPath.row]
+    }
+}
+
+// Network layer
+extension HomeViewModel {
     private func getData<DataKind:Codable>(_ url: String,_
                                            dataKind: DataKind.Type, _
                                            completion: @escaping (_ data: DataKind) -> Void ) {

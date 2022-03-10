@@ -13,6 +13,11 @@ struct Activity: Codable {
     let accessibility, participants, price: Double
 }
 
+struct ActivityEntity {
+    var type: ActivityType = .education
+    var activities: [Activity] = []
+}
+
 enum ActivityType: String, CaseIterable, Codable {
     case education
     case recreational
