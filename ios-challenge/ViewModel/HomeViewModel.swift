@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class HomeViewModel {
     private var activities = [Activity]()
@@ -41,9 +42,14 @@ class HomeViewModel {
         ActivityType.allCases.forEach { type in
             for _ in 1...numberOfActivitiesPerType {
                 dispatchGroup.enter()
-                getData(EndPoints.activity(type: type.rawValue).url, Activity.self) { [weak self] data in
+                getData(EndPoints.activity(type: type.rawValue).url, Activity.self) { [weak self] result in
                     guard let self = self else { return }
-                    self.activities.append(data)
+                    switch result {
+                    case let .failure(error):
+                        print("Error: \(error.localizedDescription) - \(type)")
+                    case let .success(data):
+                        self.activities.append(data)
+                    }
                     dispatchGroup.leave()
                 }
             }
@@ -88,13 +94,27 @@ class HomeViewModel {
 extension HomeViewModel {
     private func getData<DataKind:Codable>(_ url: String,_
                                            dataKind: DataKind.Type, _
-                                           completion: @escaping (_ data: DataKind) -> Void ) {
+                                           completion: @escaping (Result<DataKind, Error>) -> Void ) {
         let url = URL(string: url)
         URLSession.shared.dataTask(with: url!) { data, response, error in
-            if error == nil && data != nil {
-                let convertedData = try! JSONDecoder().decode(dataKind, from: data!)
-                completion(convertedData)
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            guard let data = data else {
+                completion(.failure(ApiError.badRequest))
+                return
+            }
+            do {
+                let convertedData = try JSONDecoder().decode(dataKind, from: data)
+                completion(.success(convertedData))
+            } catch let parseError {
+                completion(.failure(parseError))
             }
         }.resume()
     }
+}
+
+enum ApiError: Error {
+    case badRequest
 }
