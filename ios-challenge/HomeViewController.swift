@@ -41,9 +41,12 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let activity = viewModel.activityForRowAt(indexPath: indexPath)
         cell.textLabel?.text = "Accessibility: \(activity.accessibility)"
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
 
         cell.detailTextLabel?.text = "Activity: \(activity.activity) \nParticipants: \(activity.participants)"
         cell.detailTextLabel?.numberOfLines = 0
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        cell.detailTextLabel?.textColor = .systemGray
 
         return cell
     }
@@ -57,6 +60,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 as? SectionHeaderView else { return nil }
         let activityEntity = viewModel.activityEntityForAt(section: section)
         view.textLabel?.text = activityEntity.type.rawValue.uppercased()
+        view.textLabel?.font = UIFont.systemFont(ofSize: 22, weight: .regular)
+
         return view
     }
     
