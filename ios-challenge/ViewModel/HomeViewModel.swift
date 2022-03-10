@@ -60,6 +60,7 @@ final class HomeViewModel {
             activityEntity.type = type
             activityEntity.activities = self.activities
                 .filter{ $0.type == type }
+                .sorted(by: { $0.accessibility < $1.accessibility })
             self.activityEntities.append(activityEntity)
         }
     }
