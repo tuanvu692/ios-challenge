@@ -7,34 +7,14 @@
 
 import Foundation
 import UIKit
+import LinkPresentation
 
 class HomeViewModel {
     private var activities = [Activity]()
     private var activityEntities = [ActivityEntity]()
-    
-    static var mainURL = "http://www.boredapi.com/api/"
     let numberOfActivitiesPerType = 5
-    
-    enum EndPoints: RawRepresentable {
-        init?(rawValue: String) { nil }
-        
-        case activity(type: String)
-        
-        var url: String {
-            return HomeViewModel.mainURL + self.rawValue
-        }
-        
-        var rawValue: String {
-            switch self {
-            case .activity(let type):
-                return "activity?type=\(type)"
-            }
-        }
-    }
-    
-    init(activityEntities: [ActivityEntity]) {
-        self.activityEntities = activityEntities
-    }
+
+    init() {}
     
     func getActivities(completion: @escaping () -> Void) {
         ///`Create Object Of DispatchGroup`
@@ -90,8 +70,30 @@ class HomeViewModel {
     }
 }
 
-// Network layer
+// Network Layer
 extension HomeViewModel {
+    static var mainURL = "http://www.boredapi.com/api/"
+    enum ApiError: Error {
+        case badRequest
+    }
+
+    enum EndPoints: RawRepresentable {
+        init?(rawValue: String) { nil }
+        
+        case activity(type: String)
+        
+        var url: String {
+            return mainURL + self.rawValue
+        }
+        
+        var rawValue: String {
+            switch self {
+            case .activity(let type):
+                return "activity?type=\(type)"
+            }
+        }
+    }
+
     private func getData<DataKind:Codable>(_ url: String,_
                                            dataKind: DataKind.Type, _
                                            completion: @escaping (Result<DataKind, Error>) -> Void ) {
@@ -113,8 +115,19 @@ extension HomeViewModel {
             }
         }.resume()
     }
+    
+    func fetchMetadata(for link: String, completion: @escaping (Result<LPLinkMetadata, Error>) -> Void) {
+        guard let url = URL(string: link) else { return }
+        let provider = LPMetadataProvider()
+        provider.startFetchingMetadata(for: url) { metadata, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            if let metadata = metadata {
+                completion(.success(metadata))
+            }
+        }
+    }
 }
 
-enum ApiError: Error {
-    case badRequest
-}

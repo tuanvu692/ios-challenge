@@ -8,7 +8,7 @@
 import Foundation
 
 struct Activity: Codable {
-    let activity, key: String
+    let activity, key, link: String
     let type: ActivityType
     let accessibility, participants, price: Double
 }
@@ -29,14 +29,3 @@ enum ActivityType: String, CaseIterable, Codable {
     case music
     case busywork
 }
-
-/*
- {
-     "activity": "Learn how to play a new sport",
-     "accessibility": 0.2,
-     "type": "recreational",
-     "participants": 1,
-     "price": 0.1,
-     "key": "5808228"
- }
- */
